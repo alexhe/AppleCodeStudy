@@ -122,7 +122,7 @@ typedef struct pstatus pstatus_t;
 typedef struct prsyminfo prsyminfo_t;
 
 typedef struct dtrace_hdl dtrace_hdl_t;
-typedef struct dtrace_prog dtrace_prog_t;
+typedef struct dtrace_prog dtrace_prog_t; //helin
 typedef struct dtrace_vector dtrace_vector_t;
 typedef struct dtrace_aggdata dtrace_aggdata_t;
 

@@ -202,7 +202,7 @@ ctf_type_resolve(ctf_file_t *fp, ctf_id_t type)
  * the actual number of bytes (not including \0) needed to format the name.
  */
 ssize_t
-ctf_type_lname(ctf_file_t *fp, ctf_id_t type, char *buf, size_t len)
+ctf_type_lname(ctf_file_t *fp, ctf_id_t type, char *buf, size_t len) //helin: 生成数字标签 对应到 类型参数?
 {
 	ctf_decl_t cd;
 	ctf_decl_node_t *cdp;

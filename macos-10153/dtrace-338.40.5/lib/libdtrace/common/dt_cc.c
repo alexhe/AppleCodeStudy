@@ -2569,7 +2569,7 @@ dt_load_libs(dtrace_hdl_t *dtp)
 }
 
 static void *
-dt_compile(dtrace_hdl_t *dtp, int context, dtrace_probespec_t pspec, void *arg,
+dt_compile(dtrace_hdl_t *dtp, int context, dtrace_probespec_t pspec, void *arg, //helin
     uint_t cflags, int argc, char *const argv[], FILE *fp, const char *s)
 {
 	dt_node_t *dnp;
@@ -2698,7 +2698,7 @@ dt_compile(dtrace_hdl_t *dtp, int context, dtrace_probespec_t pspec, void *arg,
 	 * simply run the code generator and assembler on the resulting tree.
 	 */
 	switch (context) {
-	case DT_CTX_DPROG:
+	case DT_CTX_DPROG: //helin
 		assert(yypcb->pcb_root->dn_kind == DT_NODE_PROG);
 
 		if ((dnp = yypcb->pcb_root->dn_list) == NULL &&
@@ -2733,7 +2733,7 @@ dt_compile(dtrace_hdl_t *dtp, int context, dtrace_probespec_t pspec, void *arg,
 		rv = yypcb->pcb_prog;
 		break;
 
-	case DT_CTX_DEXPR:
+	case DT_CTX_DEXPR: //helin
 		(void) dt_node_cook(yypcb->pcb_root, DT_IDFLG_REF);
 		dt_cg(yypcb, yypcb->pcb_root);
 		rv = dt_as(yypcb);
@@ -2774,7 +2774,7 @@ out:
 }
 
 dtrace_prog_t *
-dtrace_program_strcompile(dtrace_hdl_t *dtp, const char *s,
+dtrace_program_strcompile(dtrace_hdl_t *dtp, const char *s, //helin
     dtrace_probespec_t spec, uint_t cflags, int argc, char *const argv[])
 {
 	return (dt_compile(dtp, DT_CTX_DPROG,

@@ -158,7 +158,7 @@ dtrace_program_info(dtrace_hdl_t *dtp, dtrace_prog_t *pgp,
 }
 
 int
-dtrace_program_exec(dtrace_hdl_t *dtp, dtrace_prog_t *pgp,
+dtrace_program_exec(dtrace_hdl_t *dtp, dtrace_prog_t *pgp, //helin: pgp : ProGram Pointer
     dtrace_proginfo_t *pip)
 {
 	void *dof;
@@ -166,10 +166,10 @@ dtrace_program_exec(dtrace_hdl_t *dtp, dtrace_prog_t *pgp,
 
 	dtrace_program_info(dtp, pgp, pip);
 
-	if ((dof = dtrace_dof_create(dtp, pgp, DTRACE_D_STRIP)) == NULL)
+	if ((dof = dtrace_dof_create(dtp, pgp, DTRACE_D_STRIP)) == NULL) //helin: program 转换成dof
 		return (-1);
 
-	n = dt_ioctl(dtp, DTRACEIOC_ENABLE, dof);
+	n = dt_ioctl(dtp, DTRACEIOC_ENABLE, dof); //helin: ioctl 发送dof给kernel
         if (n == -1 && (errno & 0xfffff000))
                 n = (((unsigned int)errno) >> 12); /* Darwin's ioctls only return -1 or zero. Overload errno to mimic Solaris. */
 	dtrace_dof_destroy(dtp, dof);
@@ -375,7 +375,7 @@ typedef struct dt_header_info {
 } dt_header_info_t;
 
 static void
-dt_header_fmt_macro(char *buf, const char *str)
+dt_header_fmt_macro(char *buf, const char *str) //helin: 字符串强制转换为大写
 {
 	for (;;) {
 		if (islower(*str)) {
@@ -420,7 +420,7 @@ static bool dt_is_single_rank_pointer_type(ctf_file_t *file, ctf_id_t type) {
 
 /*ARGSUSED*/
 static int
-dt_header_decl(dt_idhash_t *dhp, dt_ident_t *idp, void *data)
+dt_header_decl(dt_idhash_t *dhp, dt_ident_t *idp, void *data) //helin: 生成 extern void probe_$xxx(yyy,zzz,...); 和 isenable(xxx); 2个api
 {
 #pragma unused(dhp)
 	dt_header_info_t *infop = data;
@@ -440,13 +440,14 @@ dt_header_decl(dt_idhash_t *dhp, dt_ident_t *idp, void *data)
 	dt_header_fmt_func(fname, prp->pr_name);
 
 	char* probe;
-	
-	if ((probe = dt_ld_encode_probe(infop->dthi_pfname, fname, prp)) == NULL)
+	//helin: extern void __dtrace_probe$DTraceDemo$malloc_log$v1$766f6964202a$73697a655f74(const void *, size_t);
+	//helin: __dtrace_probe$DTraceDemo$malloc_log$v1$766f6964202a$73697a655f74
+	if ((probe = dt_ld_encode_probe(infop->dthi_pfname, fname, prp)) == NULL) //helin:
 		return (dt_set_errno(dtp, errno));
-	
+	//helin: extern void __dtrace_probe$DTraceDemo$malloc_log$v1$766f6964202a$73697a655f74(
 	if (fprintf(infop->dthi_out, "extern void %s(", probe) < 0)
 		return (dt_set_errno(dtp, errno));
-	
+	//helin: 遍历args 生成： const void *, size_t
 	for (dnp = prp->pr_nargs, i = 0; dnp != NULL; dnp = dnp->dn_list, i++) {
 		if (fprintf(infop->dthi_out, "%s%s",
 			    dt_is_single_rank_pointer_type(dnp->dn_ctfp, dnp->dn_type) ? "const " : "",
@@ -455,22 +456,23 @@ dt_header_decl(dt_idhash_t *dhp, dt_ident_t *idp, void *data)
 			return (dt_set_errno(dtp, errno));
 		
 		if (dnp->dn_list != NULL &&
-		    fprintf(infop->dthi_out, ", ") < 0)
+		    fprintf(infop->dthi_out, ", ") < 0) //helin: 参数非最后一个，添加", "
 			return (dt_set_errno(dtp, errno));
 	}
-
+	//helin: 如果无参, 使用 void
 	if (i == 0 && fprintf(infop->dthi_out, "void") < 0)
 		return (dt_set_errno(dtp, errno));
 
+	//helin: extern api 完后添加 ");\n" 结束换行
 	if (fprintf(infop->dthi_out, ");\n") < 0)
 		return (dt_set_errno(dtp, errno));
 
 	char* isenabled;
-		
+	//helin: __dtrace_isenabled$DTraceDemo$malloc_log$v1
 	if ((isenabled = dt_ld_encode_isenabled(infop->dthi_pfname, fname)) == NULL)
 		return (dt_set_errno(dtp, errno));
-	
-	if (fprintf(infop->dthi_out, "extern int %s(void);\n", isenabled) < 0)
+	//helin: extern int __dtrace_isenabled$DTraceDemo$malloc_log$v1(void);
+	if (fprintf(infop->dthi_out, "extern int %s(void);\n", isenabled) < 0) //helin:
 		return (dt_set_errno(dtp, errno));
 	
 	free(isenabled);
@@ -500,7 +502,18 @@ dt_header_probe(dt_idhash_t *dhp, dt_ident_t *idp, void *data)
 
 	fname = alloca(strlen(prp->pr_name) + 1 + i);
 	dt_header_fmt_func(fname, prp->pr_name);
-
+/** helin:
+#define DTRACEDEMO_MALLOC_LOG(arg0, arg1) \
+do { \
+        __asm__ volatile(".reference " DTRACEDEMO_TYPEDEFS); \
+        __dtrace_probe$DTraceDemo$malloc_log$v1$766f6964202a$73697a655f74(arg0, arg1); \
+        __asm__ volatile(".reference " DTRACEDEMO_STABILITY); \
+} while (0)
+#define DTRACEDEMO_MALLOC_LOG_ENABLED() \
+        ({ int _r = __dtrace_isenabled$DTraceDemo$malloc_log$v1(); \
+                __asm__ volatile(""); \
+                _r; })
+*/
 	if (fprintf(infop->dthi_out, "#define\t%s_%s(",
 	    infop->dthi_pmname, mname) < 0)
 		return (dt_set_errno(dtp, errno));
@@ -525,16 +538,16 @@ dt_header_probe(dt_idhash_t *dhp, dt_ident_t *idp, void *data)
 			return (dt_set_errno(dtp, errno));
 
 		char* probe;
-		
+		//helin: __dtrace_probe$DTraceDemo$malloc_log$v1$766f6964202a$73697a655f74
 		if ((probe = dt_ld_encode_probe(infop->dthi_pfname, fname, prp)) == NULL)
 			return (dt_set_errno(dtp, errno));
-		
+		//helin: __dtrace_probe$DTraceDemo$malloc_log$v1$766f6964202a$73697a655f74(
 		if (fprintf(infop->dthi_out, "%s(", probe) < 0)
 			return (dt_set_errno(dtp, errno));
 		
 		free(probe);
 		probe = NULL;
-
+		//helin: arg0, arg1
 		for (i = 0; i < prp->pr_nargc; i++) {
 			if (fprintf(infop->dthi_out, "arg%d", i) < 0)
 				return (dt_set_errno(dtp, errno));
@@ -543,6 +556,7 @@ dt_header_probe(dt_idhash_t *dhp, dt_ident_t *idp, void *data)
 			    fprintf(infop->dthi_out, ", ") < 0)
 				return (dt_set_errno(dtp, errno));
 		}
+		//helin: __dtrace_probe$DTraceDemo$malloc_log$v1$766f6964202a$73697a655f74(arg0, arg1);+'\'
 		if (fprintf(infop->dthi_out, "); \\\n\t") < 0)
 			return (dt_set_errno(dtp, errno));
 		

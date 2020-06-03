@@ -51,11 +51,11 @@ extern "C" {
 #include <unordered_map>
 #include <memory>
 
-#define dtrace_separator			"$"
+#define dtrace_separator			"$" //helin
 #define dtrace_separator_char			'$'
 
 // Why an encoding & decoding prefix? During compilation, the prefix may change...
-#define dtrace_stability_encoding_prefix	"___dtrace_stability"
+#define dtrace_stability_encoding_prefix	"___dtrace_stability" //helin
 #define dtrace_stability_decoding_prefix	"___dtrace_stability"
 #define dtrace_stability_version		"v1"
 
@@ -63,9 +63,9 @@ extern "C" {
 #define dtrace_typedefs_decoding_prefix	"___dtrace_typedefs"
 #define dtrace_typedefs_version		"v2"
 
-#define dtrace_probe_encoding_prefix		"__dtrace_probe"
+#define dtrace_probe_encoding_prefix		"__dtrace_probe" //helin
 #define dtrace_probe_decoding_prefix		"___dtrace_probe"
-#define dtrace_probe_version			"v1"
+#define dtrace_probe_version			"v1" //helin
 
 #define dtrace_isenabled_encoding_prefix	"__dtrace_isenabled"
 #define dtrace_isenabled_decoding_prefix	"___dtrace_isenabled"
@@ -100,7 +100,7 @@ static std::string dt_ld_decode_string(const char* string)
 #pragma mark -
 #pragma mark stability encoding / decoding
 
-char* dt_ld_encode_stability(char* provider_name, dt_provider_t *provider)
+char* dt_ld_encode_stability(char* provider_name, dt_provider_t *provider) //helin
 {
         // Stability info is encoded as (dtrace_stability_encoding_prefix)(providerName)(dtrace_stability_version)(stability_data)
         size_t bufsize = sizeof(dtrace_stability_encoding_prefix) +
@@ -121,7 +121,7 @@ char* dt_ld_encode_stability(char* provider_name, dt_provider_t *provider)
                  dtrace_separator,
                  dtrace_stability_version,
                  dtrace_separator,
-                 /* provider attributes */
+                 /* provider attributes */ //helin: %x 开始是 属性标志
                  provider->pv_desc.dtvd_attr.dtpa_provider.dtat_name,
                  provider->pv_desc.dtvd_attr.dtpa_provider.dtat_data,
                  provider->pv_desc.dtvd_attr.dtpa_provider.dtat_class,
@@ -422,8 +422,11 @@ static std::string dt_ld_decode_typedefs(std::string encoding, std::string* vers
 
 char* dt_ld_encode_probe(char* provider_name, char* probe_name, dt_probe_t* probe)
 {
+    //helin: extern void __dtrace_probe$DTraceDemo$malloc_log$v1$766f6964202a$73697a655f74(const void *, size_t);
+    //helin: 
         char line_buffer[256];
-        snprintf(line_buffer, sizeof(line_buffer), "%s%s%s%s%s%s%s",
+        //helin: __dtrace_probe$DTraceDemo$malloc_log$v1
+        snprintf(line_buffer, sizeof(line_buffer), "%s%s%s%s%s%s%s", //helin
                  dtrace_probe_encoding_prefix,
                  dtrace_separator,
                  provider_name,
@@ -438,9 +441,9 @@ char* dt_ld_encode_probe(char* provider_name, char* probe_name, dt_probe_t* prob
                 dt_node_t* node = probe->pr_nargv[i];
                 ssize_t size = ctf_type_lname(node->dn_ctfp, node->dn_type, NULL, 0) + 1;
                 char* buf = (char*)alloca(size);
-                ctf_type_lname(node->dn_ctfp, node->dn_type, buf, size);
-                encoded += dtrace_separator_char;
-                encoded += dt_ld_encode_string(buf);
+                ctf_type_lname(node->dn_ctfp, node->dn_type, buf, size); //helin: args[i] 转成num 存入buf
+                encoded += dtrace_separator_char; //helin: '$'
+                encoded += dt_ld_encode_string(buf); //helin: 766f6964202a 和 73697a655f74
         }
 
         return strdup(encoded.c_str());
@@ -498,7 +501,7 @@ char* dt_ld_encode_isenabled(char* provider_name, char* probe_name)
                                                 1; // NULL terminator
 
         char* buffer = (char*)malloc(bufsize);
-
+//helin: extern int __dtrace_isenabled$DTraceDemo$malloc_log$v1(void);
         snprintf(buffer, bufsize, "%s%s%s%s%s%s%s",
                  dtrace_isenabled_encoding_prefix,
                  dtrace_separator,

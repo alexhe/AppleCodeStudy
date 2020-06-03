@@ -114,7 +114,7 @@ typedef struct ctf_list {
 } ctf_list_t;
 
 typedef enum {
-	CTF_PREC_BASE,
+	CTF_PREC_BASE, //helin
 	CTF_PREC_POINTER,
 	CTF_PREC_ARRAY,
 	CTF_PREC_FUNCTION,

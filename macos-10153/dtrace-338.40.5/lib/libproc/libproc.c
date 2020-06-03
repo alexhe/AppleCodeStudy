@@ -22,8 +22,12 @@
  */
 
 #if DTRACE_USE_CORESYMBOLICATION
-#include <CoreSymbolication/CoreSymbolication.h>
-#include <CoreSymbolication/CoreSymbolicationPrivate.h>
+//helin: ++
+//#include <CoreSymbolication/CoreSymbolication.h>
+//#include <CoreSymbolication/CoreSymbolicationPrivate.h>
+#include "../../include/missedFiles/CoreSymbolication/CoreSymbolication.h"
+#include "../../include/missedFiles/CoreSymbolication/CoreSymbolicationPrivate.h"
+//helin: --
 #endif /* DTRACE_USE_CORESYMBOLICATION */
 
 #include <mach/mach.h>
@@ -36,7 +40,10 @@
 #include <sys/sysctl.h>
 
 #include <sys/proc_info.h>
-#include <sys/codesign.h>
+//helin: ++
+//#include <sys/codesign.h>
+#include "../../include/missedFiles/sys/codesign.h"
+//helin: --
 #include <sys/fasttrap_isa.h>
 
 #if DTRACE_TARGET_APPLE_MAC
@@ -46,7 +53,10 @@
 
 #include "libproc.h"
 #include "libproc_apple.h"
-#include "libproc_internal.h"
+//helin: ++
+//#include "libproc_internal.h"
+#include "../../include/missedFiles/libproc/libproc_internal.h"
+//helin: --
 
 #include <spawn.h>
 #include <pthread.h>
@@ -159,7 +169,7 @@ static struct ps_prochandle* createProcAndSymbolicator(pid_t pid, task_t task, i
 				break;
 
 			case kCSNotificationPing:
-				os_log(proc_log, "pid %d: kCSNotificationPing (value: %d)", CSSymbolicatorGetPid(data.symbolicator), data.u.ping.value);
+				os_log(proc_log, "pid %d: kCSNotificationPing (value: %ld)", CSSymbolicatorGetPid(data.symbolicator), data.u.ping.value);
 				// We're faking a "POSTINIT" breakpoint here.
 				if (should_queue_proc_activity_notices)
 					Pcreate_sync_proc_activity(proc, RD_POSTINIT);

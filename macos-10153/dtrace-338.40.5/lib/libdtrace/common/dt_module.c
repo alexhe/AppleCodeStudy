@@ -47,9 +47,10 @@
 #include <sys/sysctl.h>
 
 #include <dtrace.h>
-
-#include <sys/kas_info.h>
-
+//helin: ++
+//#include <sys/kas_info.h>
+#include "../../../include/missedFiles/sys/kas_info.h"
+//helin: --
 #include <dt_strtab.h>
 #include <dt_module.h>
 #include <dt_impl.h>

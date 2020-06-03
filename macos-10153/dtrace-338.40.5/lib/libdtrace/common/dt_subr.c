@@ -467,7 +467,7 @@ dt_dprintf(const char *format, ...)
 #endif /* !OS_LOG_SUPPORTED */
 
 int
-dt_ioctl(dtrace_hdl_t *dtp, int val, void *arg)
+dt_ioctl(dtrace_hdl_t *dtp, int val, void *arg) //helin: dtrace ioctl
 {
 	const dtrace_vector_t *v = dtp->dt_vector;
 

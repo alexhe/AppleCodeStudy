@@ -8,8 +8,12 @@
  */
 
 #if DTRACE_USE_CORESYMBOLICATION
-#include <CoreSymbolication/CoreSymbolication.h>
-#include <CoreSymbolication/CoreSymbolicationPrivate.h>
+//helin: ++
+//#include <CoreSymbolication/CoreSymbolication.h>
+//#include <CoreSymbolication/CoreSymbolicationPrivate.h>
+#include "../../../include/missedFiles/CoreSymbolication/CoreSymbolication.h"
+#include "../../../include/missedFiles/CoreSymbolication/CoreSymbolicationPrivate.h"
+//helin: --
 #endif /* DTRACE_USE_CORESYMBOLICATION */
 
 #include <libkern/OSAtomic.h>
@@ -160,7 +164,9 @@ dtrace_kernel_path(char *kernel_path, size_t max_length) {
 #endif /* DTRACE_USE_CORESYMBOLICATION */
 	return -1;
 }
-
+//helin: ++
+char* CSDemangleSymbolName(char* mangled);
+//helin: --
 char*
 demangleSymbolCString(const char *mangled)
 {

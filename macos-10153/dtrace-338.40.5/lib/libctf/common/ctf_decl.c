@@ -61,7 +61,7 @@ ctf_decl_init(ctf_decl_t *cd, char *buf, size_t len)
 	cd->cd_qualp = CTF_PREC_BASE;
 	cd->cd_ordp = CTF_PREC_BASE;
 
-	cd->cd_buf = buf;
+	cd->cd_buf = buf; //helin: cd_buf:[cd_ptr, cd_end]
 	cd->cd_ptr = buf;
 	cd->cd_end = buf + len;
 }

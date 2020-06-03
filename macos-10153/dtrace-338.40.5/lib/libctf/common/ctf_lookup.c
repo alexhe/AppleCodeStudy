@@ -254,7 +254,7 @@ ctf_lookup_by_id(ctf_file_t **fpp, ctf_id_t type)
 		return (NULL);
 	}
 
-	type = CTF_TYPE_TO_INDEX(type);
+	type = CTF_TYPE_TO_INDEX(type); // helin: #define	CTF_TYPE_TO_INDEX(id)		((id) & 0x7fff)
 	if (type > 0 && type <= fp->ctf_typemax) {
 		*fpp = fp; /* function returns ending CTF container */
 		return (LCTF_INDEX_TO_TYPEPTR(fp, type));

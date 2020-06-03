@@ -5,8 +5,10 @@
 #include <string.h>
 
 #include <sys/sysctl.h>
-#include <os/assumes.h>
-
+//helin: ++
+//#include <os/assumes.h>
+#include "../../../include/missedFiles/os/assumes.h"
+//helin: --
 #if TARGET_OS_IPHONE && (TARGET_OS_SIMULATOR || !TARGET_OS_IOS)
 #define TARGET_SUPPORTS_NATIVE_SYSTEM 0
 #include <crt_externs.h>

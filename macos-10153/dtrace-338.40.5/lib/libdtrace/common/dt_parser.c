@@ -4171,7 +4171,7 @@ dt_cook_aggregation(dt_node_t *dnp, uint_t idflags)
  * user can simply use the D variable declaration syntax to work around them.
  */
 static dt_node_t *
-dt_cook_clause(dt_node_t *dnp, uint_t idflags)
+dt_cook_clause(dt_node_t *dnp, uint_t idflags) //helin
 {
 	volatile int err, tries;
 	jmp_buf ojb;
@@ -4513,7 +4513,7 @@ dt_cook_none(dt_node_t *dnp, uint_t idflags)
 	return (dnp);
 }
 
-static dt_node_t *(*dt_cook_funcs[])(dt_node_t *, uint_t) = {
+static dt_node_t *(*dt_cook_funcs[])(dt_node_t *, uint_t) = { //helin: 函数指针数组
 	dt_cook_none,		/* DT_NODE_FREE */
 	dt_cook_none,		/* DT_NODE_INT */
 	dt_cook_none,		/* DT_NODE_STRING */
@@ -4545,7 +4545,7 @@ static dt_node_t *(*dt_cook_funcs[])(dt_node_t *, uint_t) = {
  * the resulting identifier if it is a D variable or D aggregation.
  */
 dt_node_t *
-dt_node_cook(dt_node_t *dnp, uint_t idflags)
+dt_node_cook(dt_node_t *dnp, uint_t idflags) //helin
 {
 	int oldlineno = yylineno;
 

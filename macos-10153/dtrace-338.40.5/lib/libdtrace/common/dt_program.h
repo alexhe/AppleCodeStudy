@@ -39,12 +39,12 @@ typedef struct dt_stmt {
 	dtrace_stmtdesc_t *ds_desc; /* pointer to statement description */
 } dt_stmt_t;
 
-struct dtrace_prog {
+struct dtrace_prog { //helin: prog {stmt->next} -> next
 	dt_list_t dp_list;	/* list forward/back pointers */
-	dt_list_t dp_stmts;	/* linked list of dt_stmt_t's */
+	dt_list_t dp_stmts;	/* linked list of dt_stmt_t's */ //helin: 语句链表
 	ulong_t **dp_xrefs;	/* array of translator reference bitmaps */
 	uint_t dp_xrefslen;	/* length of dp_xrefs array */
-	uint8_t dp_dofversion;	/* DOF version this program requires */
+	uint8_t dp_dofversion;	/* DOF version this program requires */ //helin: DOF: dtrace object format
 };
 
 extern dtrace_prog_t *dt_program_create(dtrace_hdl_t *);

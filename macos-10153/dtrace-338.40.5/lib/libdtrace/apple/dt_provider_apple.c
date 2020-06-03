@@ -8,7 +8,10 @@
 #if DTRACE_TARGET_APPLE_EMBEDDED
 #include <sys/sysctl.h>
 #elif DTRACE_TARGET_APPLE_MAC
-#include <sys/csr.h>
+//helin: ++
+//#include <sys/csr.h>
+#include "../../../include/missedFiles/sys/csr.h"
+//helin: --
 #endif
 
 int
